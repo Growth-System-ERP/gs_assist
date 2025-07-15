@@ -1,0 +1,4 @@
+chromadb>=1.0.7
+sentence_transformers>=4.1.0
+tf-keras>=2.19.0
+inflect>=7.5.0

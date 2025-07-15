@@ -1,0 +1,105 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:canonical_name",
+ "creation": "2025-04-26 19:27:34.057267",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_sjmj",
+  "canonical_name",
+  "groups",
+  "doc_type",
+  "is_active",
+  "embedding_id",
+  "last_indexed",
+  "column_break_sofg",
+  "aliases",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "doc_type",
+   "fieldtype": "Link",
+   "label": "DocType",
+   "options": "DocType"
+  },
+  {
+   "description": "Comma seperated aliases for entity, make sure they stay single word",
+   "fieldname": "aliases",
+   "fieldtype": "Small Text",
+   "label": "Aliases"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "embedding_id",
+   "fieldtype": "Data",
+   "label": "Embedding ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "groups",
+   "fieldtype": "Table MultiSelect",
+   "label": "Entity Group",
+   "options": "Entity Group CT",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_sjmj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_sofg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "last_indexed",
+   "fieldtype": "Datetime",
+   "label": "Last Indexed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "canonical_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Entity Name",
+   "reqd": 1,
+   "unique": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-04-27 00:45:04.158732",
+ "modified_by": "Administrator",
+ "module": "GSAI Assist",
+ "name": "Entity",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
