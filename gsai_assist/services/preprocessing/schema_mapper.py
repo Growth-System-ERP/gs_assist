@@ -34,7 +34,7 @@ def get_doctypes_with_multiple_links(entity_list):
     # Process direct links
     for link in direct_links:
         parent = link.parent
-        doctype_links.setdefault(parent, set()).add(link.options)
+        doctype_links.setdefault(parent, {}).setdefault("entities", set()).add(link.options)
     
     # 2. Child Table Links: Find all child tables and their link fields to our entities
     # This is a complex query that:
@@ -43,7 +43,8 @@ def get_doctypes_with_multiple_links(entity_list):
     child_table_links_query = """
         SELECT 
             parent_df.parent as parent_doctype,
-            child_df.options as linked_entity
+            child_df.options as linked_entity,
+            child_df.parent as child_doctype
         FROM 
             `tabDocField` parent_df
         JOIN 
@@ -59,11 +60,12 @@ def get_doctypes_with_multiple_links(entity_list):
             AND parent_dt.module not in %s
     """
     child_links = frappe.db.sql(child_table_links_query, (entity_tuple, ignore_modules), as_dict=1)
-    
+
     # Process child table links
     for link in child_links:
         parent = link.parent_doctype
-        doctype_links.setdefault(parent, set()).add(link.linked_entity)
+        doctype_links.setdefault(parent, {}).setdefault("entities", set()).add(link.linked_entity)
+        doctype_links[parent].setdefault("child_doctypes", set()).add(link.child_doctype)
     
     # 3. Dynamic Links - This is more complex and requires checking actual data
     # First, find all Dynamic Link fields and their link_doctype fields
@@ -102,7 +104,7 @@ def get_doctypes_with_multiple_links(entity_list):
         try:
             entity_links = frappe.db.sql(has_links_query, (entity_list, ignore_modules), as_dict=1)
             for link in entity_links:
-                doctype_links.setdefault(parent, set()).add(link.entity_type)
+                doctype_links.setdefault(parent, {}).setdefault("entities", set()).add(link.entity_type)
         except:
             continue
     
@@ -113,7 +115,8 @@ def get_doctypes_with_multiple_links(entity_list):
             parent_df.parent as parent_doctype,
             parent_df.options as child_table,
             child_df.fieldname as link_field,
-            child_df.options as doctype_field
+            child_df.options as doctype_field,
+            child_df.parent as child_doctype
         FROM 
             `tabDocField` parent_df
         JOIN 
@@ -149,16 +152,21 @@ def get_doctypes_with_multiple_links(entity_list):
         try:
             entity_links = frappe.db.sql(has_links_query, as_dict=1)
             for link in entity_links:
-                doctype_links.setdefault(parent, set()).add(link.entity_type)
+                doctype_links.setdefault(parent, {}).setdefault("entities", set()).add(link.entity_type)
+                doctype_links[parent].setdefault("child_doctypes", set()).add(dyn_link.child_doctype)
         except:
             continue
 
     result = []
-    for doctype, linked_entities in doctype_links.items():
+    for doctype, details in doctype_links.items():
+        linked_entities = details["entities"]
+        child_doctypes = details["child_doctypes"] if "child_doctypes" in details else []
+
         if len(linked_entities) >= 2:
             result.append({
                 "doctype": doctype,
-                "linked_entities": list(linked_entities)
+                "linked_entities": list(linked_entities),
+                "child_doctypes": list(child_doctypes)
             })
     
     return result

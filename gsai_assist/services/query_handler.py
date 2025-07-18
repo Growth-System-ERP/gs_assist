@@ -4,6 +4,8 @@ import frappe
 
 from .preprocessing import PipeLine
 
+from gsai_assist.services.managers.entity import EntityManager
+
 @frappe.whitelist()
 def match_query(query, include_groups, debug=False):
     if isinstance(include_groups, str):
@@ -13,7 +15,6 @@ def match_query(query, include_groups, debug=False):
 
 @frappe.whitelist()
 def inspect():
-    from gsai_assist.services.managers.entity import EntityManager
     coll = EntityManager()._get_collection()
     recs = coll.get(include=["uris", "documents", "metadatas"])
 
